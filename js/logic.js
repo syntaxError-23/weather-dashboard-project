@@ -1,12 +1,18 @@
 //DOM declarations
 var inputEl = $('#search-input');
-var weatherSection = $('#today')
+var weatherSection = $('#today');
+var forecastSection = $('#forecast');
+var searchesSection = $('#searches');
+var searchesBtn = $('#search-history-button');
 
+
+
+//On search button click, show weather data for city searched
 $('#search-button').on('click', event => {
     event.preventDefault();
 
     var cityName = inputEl.val();
-
+    
     // API URLs
     var queryForecastURL = ('http://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&appid=' + openWeatherKey + '&units=metric');
     var queryWeatherURL  = ('https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&appid=' + openWeatherKey + '&units=metric');
@@ -29,10 +35,35 @@ $('#search-button').on('click', event => {
         console.log(data);
         weatherSection.empty();
         displayWeather(data);
+        saveCity(cityName);
     })
+
 
 })
 
+
+//Save search to local storage
+var saveCity = city => {
+    
+    var searchHistoryArray = JSON.parse(localStorage.getItem('previous-searches')) || [];
+    console.log(searchHistoryArray);
+    searchHistoryArray.push(city);
+    localStorage.setItem('previous-searches', JSON.stringify(searchHistoryArray));
+}
+
+ searchesBtn.on('click', () => {
+    
+    var searches = JSON.parse(localStorage.getItem('previous-searches'));  
+    console.log(searches);
+
+    //loop through searches and create button for previous searches 
+    //add class to new buttons
+    //create delegated event listener for click of new button
+    //on button click, clear display and show data corresponding to city name of new button
+})
+
+
+//Display today's weather
 var displayWeather = weatherData => {
 
     var weatherDiv = $('<div>');
@@ -56,4 +87,3 @@ var displayWeather = weatherData => {
     detailsList.append(temp).append(wind).append(humidity);
 
 }
-
