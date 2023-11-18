@@ -3,22 +3,27 @@ var inputEl = $('#search-input');
 var weatherSection = $('#today');
 var forecastSection = $('#forecast');
 var searchesSection = $('#searches');
+var searchHistoryButtonsDiv = $('#search-history-container')
 var searchesBtn = $('#search-history-button');
-
-
 
 //On search button click, show weather data for city searched
 $('#search-button').on('click', event => {
     event.preventDefault();
 
     var cityName = inputEl.val();
-    
+
     // API URLs
     var queryForecastURL = ('http://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&appid=' + openWeatherKey + '&units=metric');
     var queryWeatherURL  = ('https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&appid=' + openWeatherKey + '&units=metric');
 
-    //request forecast data
-    fetch(queryForecastURL)
+    getWeatherData(queryForecastURL, queryWeatherURL);
+    saveCity(cityName);
+})
+
+//Get forecast and weather data 
+var getWeatherData = (forecastQuery, weatherQuery, city) => {
+        
+    fetch(forecastQuery)
     .then(response => {
     return response.json();
     })
@@ -27,7 +32,7 @@ $('#search-button').on('click', event => {
     })
 
     //Request current weather data
-    fetch(queryWeatherURL)
+    fetch(weatherQuery)
     .then(response => {
     return response.json();
     })
@@ -35,12 +40,8 @@ $('#search-button').on('click', event => {
         console.log(data);
         weatherSection.empty();
         displayWeather(data);
-        saveCity(cityName);
     })
-
-
-})
-
+}
 
 //Save search to local storage
 var saveCity = city => {
@@ -53,12 +54,29 @@ var saveCity = city => {
 
  searchesBtn.on('click', () => {
     
+    searchHistoryButtonsDiv.empty()
     var searches = JSON.parse(localStorage.getItem('previous-searches'));  
     console.log(searches);
 
-    //loop through searches and create button for previous searches 
+    //loop through searches and create button for previous searches
+    for(var i=0; i<searches.length; i++){
+        var searchHistoryItem = $('<button>').text(searches[i]).addClass('search-history-item');
+        
+        searchHistoryButtonsDiv.append(searchHistoryItem);
+    }
+
+    searchesSection.append(searchHistoryButtonsDiv);
     //add class to new buttons
     //create delegated event listener for click of new button
+
+    $(document).on('click', '.search-history-item', event => {
+        desiredCity = event.target.textContent;
+
+        var searchForecastURL = ('http://api.openweathermap.org/data/2.5/forecast?q=' + desiredCity + '&appid=' + openWeatherKey + '&units=metric');
+        var searchWeatherURL  = ('https://api.openweathermap.org/data/2.5/weather?q=' + desiredCity + '&appid=' + openWeatherKey + '&units=metric');
+        
+        getWeatherData(searchForecastURL, searchWeatherURL);
+    })
     //on button click, clear display and show data corresponding to city name of new button
 })
 
@@ -85,5 +103,4 @@ var displayWeather = weatherData => {
     weatherDiv.append(HeaderDiv).append(detailsList);
     HeaderDiv.append(weatherHeader).append(weatherIcon);
     detailsList.append(temp).append(wind).append(humidity);
-
 }
