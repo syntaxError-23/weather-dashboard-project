@@ -1,3 +1,6 @@
+//API key
+var openWeatherKey = '691fbe2938a4406623687c19b36a00dc';
+
 //DOM declarations
 var inputEl = $('#search-input');
 var weatherSection = $('#today');
