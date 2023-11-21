@@ -1,24 +1,68 @@
+/* General styles */
+
 ul {
     list-style-type: none;
-    padding: 0;
+    padding: 0 !important;
+    text-indent: 0;
 }
 
 li{
     margin: 0;
-    text-align: center;
+    padding: 0;
 }
+
+#search-input{
+    border: 2px solid gray;
+    border-radius: 3px;
+    outline: 0 !important;
+}
+
+#search-input:focus{
+    border: 2px solid rgb(39, 39, 39);
+    outline: 0 !important;
+}
+
+
+
+/* Weather section styles */
 
 .weather-div{
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: flex-start;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    margin-bottom: 50px !important;
+}
 
+.weather-div ul{
+    position: relative;
+    bottom: 40px;
+}
+
+.weather-div ul li{
+    margin-bottom: 15px;
+}
+
+.date-and-icon{
+    display: flex;
+    justify-content: center;
+}
+
+.date-and-icon h2{
+    margin-right: 10px;
+}
+
+.date-and-icon img{
+    position: relative;
+    bottom: 32px;
 }
 
 
 /* Forecast section styles */
-section#forecast{
-    padding: 5px;
-}
+
 
 .forecast-div{
     display: flex;
@@ -28,11 +72,20 @@ section#forecast{
 
 .single-day{
     border-radius: 4px;
-    padding: 5px;
 }
 
 .single-day ul{
-    margin: 0 auto;
+    margin: auto;
+    padding: 10px 20px !important;
+}
+
+.single-day ul li {
+    display: flex;
+    justify-content: center;
+}
+
+.forecast-header{
+    margin-bottom: 20px;
 }
 
 

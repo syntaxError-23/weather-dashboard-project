@@ -19,36 +19,35 @@
   <!-- max-width for ultra wide resolutions -->
   <div class="container-fluid" style="max-width: 1400px">
     <div class="row">
-      <aside class="col-lg-3 pb-3">
+      <aside class="col-lg-3 pb-3 mt-3">
         <h2 id="form-heading" class="mt-1 mb-3 h3 form-label">
           Search for a City:
         </h2>
         <form id="search-form" class="form">
-          <div class=" form-group">
-            <div class="input-group mr-3">
-              <input class="form-input weather-search mr-4" type="text" id="search-input" placeholder="London"
-                aria-labelledby="form-heading" aria-controls="today forecast" />
-              <div class="input-group-append">
-                <div class="button-group ml-5">
-                <button type="submit" class="btn search-button ml-5" id="search-button" aria-label="submit search">
+
+          <div class=" form-container">              
+              <div class="search-button-wrapper d-flex flex-column">
+                <input class="form-input weather-search my-3 p-2" type="text" id="search-input" placeholder="London" aria-labelledby="form-heading" aria-controls="today forecast" />
+                <button type="submit" class="btn btn-success search-button" id="search-button" aria-label="submit search">
                   Search
                 </button>
-              </div>
                 <hr class="hr weather-hr" />
               </div>
-            </div>
+
           </div>
         </form>
-        <div class="list-group" id="history"></div>
+        <h3 class="searches-title mt-2 mb-3">Recent Searches</h4>
+        <div class="list-group" id="history">
+          <div id="search-history-container"></div>
+          <button class="btn btn-danger my-3" id="clear-history">Clear history</button>
+        </div>
+        <div class="clear-button-wrapper"> 
+        </div>
       </aside>
 
-      <div class="col-lg-9 pb-3">
+      <div class="col-lg-9 px-4">
         <section id="today" class="mt-3" role="region" aria-live="polite"></section>
         <section id="forecast" class="row mt-3" role="region" aria-live="polite"></section>
-        <section id="searches" class="row mt-3" role="region" aria-live="polite">
-          <div id="search-history-container"></div>
-          <button id="search-history-button" class="btn bg-success" type="submit">Search history</button>
-        </section>
       </div>
     </div>
   </div>
