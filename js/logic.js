@@ -20,7 +20,7 @@ $('#search-button').on('click', event => {
         return;
     }
 
-    // API URLs
+    // API URLs - query is user entry so data returned is based on user entry
     var queryForecastURL = ('http://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&appid=' + openWeatherKey + '&units=metric');
     var queryWeatherURL  = ('https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&appid=' + openWeatherKey + '&units=metric');
 
@@ -30,15 +30,15 @@ $('#search-button').on('click', event => {
     cityName.text('');
 })
 
-//Get forecast and weather data 
+//function to get forecast and weather data 
 var getWeatherData = (forecastQuery, weatherQuery) => {
-        
+    
+    //requests forecast data from openweathermap
     fetch(forecastQuery)
     .then(response => {
-    return response.json();
+    return response.json(); //if request is successful data is returned (another promise)
     })
     .then(data => {
-        console.log(data);
         forecastSection.empty();
         displayForecast(data);
     })
@@ -49,7 +49,6 @@ var getWeatherData = (forecastQuery, weatherQuery) => {
     return response.json();
     })
     .then(data => {
-        console.log(data);
         weatherSection.empty();
         displayWeather(data);
     })
@@ -59,21 +58,22 @@ var getWeatherData = (forecastQuery, weatherQuery) => {
 var saveCity = city => {
     
     var searchHistoryArray = JSON.parse(localStorage.getItem('previous-searches')) || [];
-    console.log('SearchHistoryArray: ' +  searchHistoryArray);
     searchHistoryArray.push(city);
     localStorage.setItem('previous-searches', JSON.stringify(searchHistoryArray));
 }
 
     searchHistoryButtonsDiv.empty();
     var searches = JSON.parse(localStorage.getItem('previous-searches')) || [];  
-    console.log(searches);
 
+    
     //loop through searches and create button for previous searches
     
+    //if at least 5 searches have been made, get last 5 searches
     if(searches.length >= 5){
         
         for(var i=0; i<5; i++){
-        
+            
+            //if search is not empty string, create button with user entry as button text
             if((searches[searches.length - (i+1)]) != ''){
                 var searchHistoryItem = $('<button>').text(searches[searches.length - (i+1)]).addClass('search-history-item btn btn-primary my-1')
                 searchHistoryButtonsDiv.append(searchHistoryItem).addClass('d-flex flex-column');
@@ -82,7 +82,9 @@ var saveCity = city => {
         }
     }
 
+    //if less than 5 searches have been made, get all available searches
     else{ 
+                    //if search is not empty string, create button with user entry as button text
         for(var j=0; j<searches.length; j++){
             var searchHistoryItem = $('<button>').text(searches[j]).addClass('search-history-item btn btn-primary my-1');
             searchHistoryButtonsDiv.prepend(searchHistoryItem).addClass('d-flex flex-column');
@@ -91,9 +93,10 @@ var saveCity = city => {
         
     }
    
-
+    //when clear button is clicked, local storage is cleared and searches displayed on page are removed
     clearBtn.on('click', () => {
 
+        //user is prompted to confirm decision clear history
         var clearConfirm =  confirm('Are you sure you want clear your history?');
      
         if(clearConfirm === true){
@@ -104,10 +107,11 @@ var saveCity = city => {
 
     historyDiv.append(searchHistoryButtonsDiv).addClass('d-flex flex-column-reverse my-2');
 
-
+//delegated event handler for any forecast card that is dynamically created 
 $(document).on('click', '.search-history-item', event => {
     desiredCity = event.target.textContent;
 
+    //specialised API URLs based on text content of specific card
     var searchForecastURL = ('http://api.openweathermap.org/data/2.5/forecast?q=' + desiredCity + '&appid=' + openWeatherKey + '&units=metric');
     var searchWeatherURL  = ('https://api.openweathermap.org/data/2.5/weather?q=' + desiredCity + '&appid=' + openWeatherKey + '&units=metric');
     
@@ -115,7 +119,7 @@ $(document).on('click', '.search-history-item', event => {
 })
 
 
-//Display today's weather
+//function to display today's weather
 var displayWeather = weatherData => {
 
     var weatherDiv = $('<div>').addClass('weather-div');
@@ -125,7 +129,6 @@ var displayWeather = weatherData => {
     weatherHeader.text(weatherData.name + ' (' + weatherData.sys.country + '), ' + dayjs().format('DD/MM/YY'));
     weatherIconURL = ('https://openweathermap.org/img/wn/' + weatherData.weather[0].icon + '@2x.png');
     var weatherIcon = $('<img>').attr('src', weatherIconURL);
-    console.log(weatherIconURL);
 
     var detailsList = $('<ul>');
 
@@ -139,22 +142,25 @@ var displayWeather = weatherData => {
     detailsList.append(temp).append(wind).append(humidity);
 }
 
+//function to display 5 day forecast
 var displayForecast = forecastData => {
 
     var forecastDiv = $('<div>').addClass('forecast-div');
     var forecastHeader = $('<h2>').text('5 Day Forecast').addClass('forecast-header');
     var ifCounter = 0;
 
+    //ensure loop has run at least once
     for(var i=0; i<40; i++){
         
         var currentItem = forecastData.list[i + ifCounter];
 
+        //if 24 hours have passed, required components of forecast card are made for that day and appended to dailyInfoList
         if(i % 7 === 0  && i > 0){
             var oneDayForecast = $('<div>').addClass('single-day');
             var dailyInfoList = $('<ul>');
             
             var todaysTemp = currentItem.main.temp;
-            var todaysTempEl = $('<li>').text('Temp: ' + todaysTemp + ' \u00B0C');
+            var todaysTempEl = $('<li>').text('Temp: ' + todaysTemp + ' \u00B0C'); //unix code for degrees symbol
 
             var todaysIconURL = 'https://openweathermap.org/img/wn/' + currentItem.weather[0].icon + '.png';
             var todaysIconImage = $('<img>').attr('src', todaysIconURL);
