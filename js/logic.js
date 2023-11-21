@@ -1,10 +1,23 @@
+/* Tasks 
+
+- CSS (please no)
+- Clear history button
+    - Don't allow same search twice
+    - Don't save empty searches
+- Easter eggs
+
+*/
+
 //DOM declarations
 var inputEl = $('#search-input');
 var weatherSection = $('#today');
 var forecastSection = $('#forecast');
 var searchesSection = $('#searches');
-var searchHistoryButtonsDiv = $('#search-history-container')
+var searchHistoryButtonsDiv = $('#search-history-container');
 var searchesBtn = $('#search-history-button');
+
+//converts m/s to mph
+var windSpeedConversion = 2.2369362921;
 
 //On search button click, show weather data for city searched
 $('#search-button').on('click', event => {
@@ -21,7 +34,7 @@ $('#search-button').on('click', event => {
 })
 
 //Get forecast and weather data 
-var getWeatherData = (forecastQuery, weatherQuery, city) => {
+var getWeatherData = (forecastQuery, weatherQuery) => {
         
     fetch(forecastQuery)
     .then(response => {
@@ -56,7 +69,7 @@ var saveCity = city => {
 
  searchesBtn.on('click', () => {
     
-    searchHistoryButtonsDiv.empty()
+    searchHistoryButtonsDiv.empty();
     var searches = JSON.parse(localStorage.getItem('previous-searches'));  
     console.log(searches);
 
@@ -86,7 +99,7 @@ var saveCity = city => {
 //Display today's weather
 var displayWeather = weatherData => {
 
-    var weatherDiv = $('<div>');
+    var weatherDiv = $('<div>').addClass('weather-div');
     var HeaderDiv = $('<div>');
 
     var weatherHeader = $('<h2>');
@@ -97,8 +110,8 @@ var displayWeather = weatherData => {
 
     var detailsList = $('<ul>');
 
-    var temp = $('<li>').text('Temperature: ' + weatherData.main.temp);
-    var wind = $('<li>').text('Wind Speed: ' + (weatherData.wind.speed * 2.2369362921).toFixed(2) + 'mph' );
+    var temp = $('<li>').text('Temperature: ' + weatherData.main.temp + ' \u00B0C');
+    var wind = $('<li>').text('Wind Speed: ' + (weatherData.wind.speed * windSpeedConversion).toFixed(2) + ' mph' );
     var humidity = $('<li>').text('Humidity: ' + weatherData.main.humidity + '%');
 
     weatherSection.append(weatherDiv);
@@ -109,86 +122,40 @@ var displayWeather = weatherData => {
 
 var displayForecast = forecastData => {
 
-    var forecastDiv = $('<div>');
-    var highs = [];
-    var lows = [];
+    var forecastDiv = $('<div>').addClass('forecast-div');
 
-    var highestTemp;
-    var lowestTemp;
+    var ifCounter = 0;
 
     for(var i=0; i<40; i++){
-        if(i>0){
+        
+        var currentItem = forecastData.list[i + ifCounter];
 
-            var currentHigh = forecastData.list[i].main.temp_max;
-            var prevHigh = forecastData.list[i-1].main.temp_max;
+        if(i % 7 === 0  && i > 0){
+            var oneDayForecast = $('<div>').addClass('single-day');
+            var dailyInfoList = $('<ul>');
+            
+            var todaysTemp = currentItem.main.temp;
+            var todaysTempEl = $('<li>').text('Temp: ' + todaysTemp + ' \u00B0C');
 
-            var currentLow = forecastData.list[i].main.temp_min;
-            var prevLow = forecastData.list[i-1].main.temp_min;
-    
-            highestTemp = higherValue(currentHigh, prevHigh, highestTemp);
-            lowestTemp = lowerValue(currentLow, prevLow, lowestTemp);
+            var todaysIconURL = 'https://openweathermap.org/img/wn/' + currentItem.weather[0].icon + '.png';
+            var todaysIconImage = $('<img>').attr('src', todaysIconURL);
+            var todaysIcon = $('<li>').append(todaysIconImage);
 
-            if(i % 8 === 0 || i === 39){
-                var oneDayForecast = $('<div>').addClass('single-day');
-                var dailyInfoList = $('<ul>')
-                var highTempEl = $('<li>').text('Highs: ' + highestTemp);
-                var lowTempEl = $('<li>').text('Lows: ' + lowestTemp);
-                
-                var currentDate = forecastData.list[i].dt_txt.slice(0 , 10).split('-').reverse().concat();
-                console.log(currentDate);
-                dailyInfoList.append(highTempEl).append(lowTempEl);
-                oneDayForecast.append(dailyInfoList).css('background-color', 'red');
-                forecastDiv.append(oneDayForecast);
+            var currentDate = currentItem.dt_txt.slice(0 , 10).split('-').reverse().join('/');
+            var currentDateEl = $('<li>').text(currentDate);
+            var todaysWind = currentItem.wind.speed;
+            var todaysWindEl = $('<li>').text('Wind: ' + todaysWind + ' mph');
+            var todaysHumidity = currentItem.main.humidity;
+            var todaysHumidityEl = $('<li>').text('Humdidty: ' + todaysHumidity + '%');
+   
+            dailyInfoList.append(currentDateEl).append(todaysIcon).append(todaysTempEl).append(todaysWindEl).append(todaysHumidityEl)
+            oneDayForecast.append(dailyInfoList).css('background-color', 'red');
+            forecastDiv.append(oneDayForecast);
 
-                highs.push(highestTemp);
-                lows.push(lowestTemp);
-
-                highestTemp = -Infinity;
-                lowestTemp = Infinity;
-                continue;
-            }
+            ifCounter++;
         }
     }
 
     forecastSection.append(forecastDiv);
 
-}
-
-var higherValue = (current, previous, stored) => {
-    
-    if(current > previous){
-        finalValue = current;
-
-    }
-    else if(previous > current){
-        finalValue = previous;
-    }
-    else if(current === previous){
-        finalValue = current;
-    }
-
-    if(stored > finalValue){
-        finalValue = stored;
-        
-    }
-    return finalValue;
-}
-
-var lowerValue = (current, previous, stored) => {
-    
-    if(current < previous){
-        finalValue = current;
-    }
-    else if(previous < current){
-        finalValue = previous;
-    }
-    else{
-        finalValue = current;
-    }
-
-    if(stored < finalValue){
-        finalValue = stored;
-    }
-
-    return finalValue;
 }
