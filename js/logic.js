@@ -29,6 +29,8 @@ var getWeatherData = (forecastQuery, weatherQuery, city) => {
     })
     .then(data => {
         console.log(data);
+        forecastSection.empty();
+        displayForecast(data);
     })
 
     //Request current weather data
@@ -88,10 +90,10 @@ var displayWeather = weatherData => {
     var HeaderDiv = $('<div>');
 
     var weatherHeader = $('<h2>');
-    weatherHeader.text(weatherData.name + ' ' + dayjs().format('DD/MM/YY'));
+    weatherHeader.text(weatherData.name + ', (' + weatherData.sys.country + ') ' + dayjs().format('DD/MM/YY'));
     weatherIconURL = ('https://openweathermap.org/img/wn/' + weatherData.weather[0].icon + '@2x.png');
     var weatherIcon = $('<img>').attr('src', weatherIconURL);
-    console.log(weatherIconURL)
+    console.log(weatherIconURL);
 
     var detailsList = $('<ul>');
 
@@ -103,4 +105,90 @@ var displayWeather = weatherData => {
     weatherDiv.append(HeaderDiv).append(detailsList);
     HeaderDiv.append(weatherHeader).append(weatherIcon);
     detailsList.append(temp).append(wind).append(humidity);
+}
+
+var displayForecast = forecastData => {
+
+    var forecastDiv = $('<div>');
+    var highs = [];
+    var lows = [];
+
+    var highestTemp;
+    var lowestTemp;
+
+    for(var i=0; i<40; i++){
+        if(i>0){
+
+            var currentHigh = forecastData.list[i].main.temp_max;
+            var prevHigh = forecastData.list[i-1].main.temp_max;
+
+            var currentLow = forecastData.list[i].main.temp_min;
+            var prevLow = forecastData.list[i-1].main.temp_min;
+    
+            highestTemp = higherValue(currentHigh, prevHigh, highestTemp);
+            lowestTemp = lowerValue(currentLow, prevLow, lowestTemp);
+
+            if(i % 8 === 0 || i === 39){
+                var oneDayForecast = $('<div>').addClass('single-day');
+                var dailyInfoList = $('<ul>')
+                var highTempEl = $('<li>').text('Highs: ' + highestTemp);
+                var lowTempEl = $('<li>').text('Lows: ' + lowestTemp);
+                
+                var currentDate = forecastData.list[i].dt_txt.slice(0 , 10).split('-').reverse().concat();
+                console.log(currentDate);
+                dailyInfoList.append(highTempEl).append(lowTempEl);
+                oneDayForecast.append(dailyInfoList).css('background-color', 'red');
+                forecastDiv.append(oneDayForecast);
+
+                highs.push(highestTemp);
+                lows.push(lowestTemp);
+
+                highestTemp = -Infinity;
+                lowestTemp = Infinity;
+                continue;
+            }
+        }
+    }
+
+    forecastSection.append(forecastDiv);
+
+}
+
+var higherValue = (current, previous, stored) => {
+    
+    if(current > previous){
+        finalValue = current;
+
+    }
+    else if(previous > current){
+        finalValue = previous;
+    }
+    else if(current === previous){
+        finalValue = current;
+    }
+
+    if(stored > finalValue){
+        finalValue = stored;
+        
+    }
+    return finalValue;
+}
+
+var lowerValue = (current, previous, stored) => {
+    
+    if(current < previous){
+        finalValue = current;
+    }
+    else if(previous < current){
+        finalValue = previous;
+    }
+    else{
+        finalValue = current;
+    }
+
+    if(stored < finalValue){
+        finalValue = stored;
+    }
+
+    return finalValue;
 }
