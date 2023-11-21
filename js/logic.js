@@ -1,13 +1,3 @@
-/* Tasks 
-
-- CSS (please no)
-- Clear history button
-    - Don't allow same search twice
-    - Don't save empty searches
-- Easter eggs
-
-*/
-
 //DOM declarations
 var inputEl = $('#search-input');
 var weatherSection = $('#today');
