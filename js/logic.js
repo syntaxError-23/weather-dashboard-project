@@ -29,8 +29,6 @@ $('#search-button').on('click', event => {
 
     getWeatherData(queryForecastURL, queryWeatherURL);
     saveCity(cityName);
-
-    cityName.text('');
 })
 
 //function to get forecast and weather data 
