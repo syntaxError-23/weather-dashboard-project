@@ -36,6 +36,9 @@ Once you refresh teh webpage, you'll see the your search history appear like so:
 \
 <img src="./assets/screenshots/wdp-search-history.png">
 
+\
+A quick note: Some city names appear in more than one country e.g. Birmingham. The option that is defaulted to is somewhat unpredictable so be sure to include the country name. So for Birmingham in the UK the search would be 'Birmingham, UK'
+
 ---
 
 ## Dependencies
