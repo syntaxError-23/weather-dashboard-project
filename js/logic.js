@@ -24,7 +24,7 @@ $('#search-button').on('click', event => {
     }
 
     // API URLs - query is user entry so data returned is based on user entry
-    var queryForecastURL = ('http://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&appid=' + openWeatherKey + '&units=metric');
+    var queryForecastURL = ('https://api.openweathermap.org/data/2.5/forecast?q=' + cityName + '&appid=' + openWeatherKey + '&units=metric');
     var queryWeatherURL  = ('https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&appid=' + openWeatherKey + '&units=metric');
 
     getWeatherData(queryForecastURL, queryWeatherURL);
@@ -113,7 +113,7 @@ $(document).on('click', '.search-history-item', event => {
     desiredCity = event.target.textContent;
 
     //specialised API URLs based on text content of specific card
-    var searchForecastURL = ('http://api.openweathermap.org/data/2.5/forecast?q=' + desiredCity + '&appid=' + openWeatherKey + '&units=metric');
+    var searchForecastURL = ('https://api.openweathermap.org/data/2.5/forecast?q=' + desiredCity + '&appid=' + openWeatherKey + '&units=metric');
     var searchWeatherURL  = ('https://api.openweathermap.org/data/2.5/weather?q=' + desiredCity + '&appid=' + openWeatherKey + '&units=metric');
     
     getWeatherData(searchForecastURL, searchWeatherURL);
